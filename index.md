@@ -25,3 +25,27 @@ The simulation compares two different mathematical approaches to solving this ph
 
 ## Output Verification
 The resulting visualization was successfully generated and has been verified. The output file `exercise3_rl_plot.png` is confirmed to be safely stored in the `data/` directory as requested.
+
+---
+
+# Anomaly Detection with PhysicsAutoencoder
+
+## Experiment Summary
+
+1. The 1D corrupted signal was sliced into **50-timestep overlapping windows**.
+2. The **PhysicsAutoencoder** was trained only on the normal data before **period 60**.
+3. The full dataset, including the corrupted region, was passed through the trained model.
+4. The **reconstruction loss** was calculated using **Mean Absolute Error (MAE)**.
+5. The anomaly is visible as a **strong spike** in the reconstruction loss plot.
+
+## Reconstruction Loss
+
+![Reconstruction Loss — Anomaly Detection](data/reconstruction_loss_anomaly.png)
+
+> The spike between periods 70–75 corresponds to the injected high-frequency sabotage. The autoencoder, having only learned normal signal patterns, produces high reconstruction error in the corrupted region.
+
+## Architecture Review
+
+- **Gemini** reviewed the initial dense-layer PhysicsAutoencoder architecture.
+- Gemini suggested replacing the dense encoder/decoder with **Conv1D** and **Conv1DTranspose** layers to better capture local temporal patterns in the signal windows.
+- The revised convolutional architecture is implemented in `src/architecture_gemini.py`.
