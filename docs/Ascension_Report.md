@@ -99,3 +99,49 @@ a technique known as *automatic differentiation*.
   function.  It does not need manual perturbations, produces
   machine-precision gradients, and scales efficiently regardless of the
   number of input parameters.
+
+## Agentic Refactoring for the Horizon
+
+### Explicit State in Flax vs. Implicit State in Keras
+
+In **Keras**, model parameters are commonly stored *inside* the model
+object.  After calling `model.fit()` or even just `model(x)`, the
+trained weights live in `model.weights` — tightly coupled to the object
+that defines the architecture.
+
+In **Flax (Linen)**, the `nn.Module` subclass defines only the
+*architecture* — which layers exist, how data flows through them, and
+what activations are used.  It stores **no weights** as instance
+attributes:
+
+1. **Initialisation** — `params = model.init(key, x)` traces the
+   network once to discover layer shapes and draws random initial
+   weights.  The resulting `params` pytree lives *outside* the model.
+2. **Forward pass** — `output = model.apply(params, x)` is a pure
+   function: it takes parameters and input, returns output, and has no
+   side effects.
+
+This separation means:
+
+- The same `model.apply` can be wrapped in `jax.jit` for compilation,
+  `jax.grad` for differentiation, or `jax.vmap` for batching — all
+  without special framework hooks.
+- Flax separates *"what the network is"* from *"what parameter values
+  it currently uses"*, making the entire training loop functionally
+  pure.
+
+### Execution Summary
+
+`src/flax_core.py` was run successfully with `uv run python src/flax_core.py`.
+
+| Detail | Value |
+|---|---|
+| Input shape | (1, 4) |
+| Output shape | (1, 1) |
+| Hidden layer | Dense_0 — kernel (4, 32), bias (32,) |
+| Output layer | Dense_1 — kernel (32, 1), bias (1,) |
+| Model output | `[[0.4506556]]` |
+
+The output was produced by calling `model.apply(params, x)`, not by
+hidden internal state — confirming that Flax treats the network as a
+stateless, pure function.
