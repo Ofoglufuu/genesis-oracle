@@ -49,3 +49,13 @@ The resulting visualization was successfully generated and has been verified. Th
 - **Gemini** reviewed the initial dense-layer PhysicsAutoencoder architecture.
 - Gemini suggested replacing the dense encoder/decoder with **Conv1D** and **Conv1DTranspose** layers to better capture local temporal patterns in the signal windows.
 - The revised convolutional architecture is implemented in `src/architecture_gemini.py`.
+
+## PINN Heat Equation Fabric
+
+- A mesh-free PINN dataset was generated using random collocation, IC, and BC points.
+- A Flax Linen MLP named HeatSurrogate was implemented.
+- The heat equation residual u_t - alpha*u_xx was enforced using JAX automatic differentiation.
+- The model was trained with Optax Adam for 5000 epochs.
+- A static 3D surface plot and an interactive Plotly visualization were created.
+- [docs/Fabric_Report.md](docs/Fabric_Report.md)
+- [data/pinn_3d_fabric.html](data/pinn_3d_fabric.html)
