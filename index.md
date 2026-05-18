@@ -52,10 +52,9 @@ The resulting visualization was successfully generated and has been verified. Th
 
 ## PINN Heat Equation Fabric
 
-- A mesh-free PINN dataset was generated using random collocation, IC, and BC points.
-- A Flax Linen MLP named HeatSurrogate was implemented.
-- The heat equation residual u_t - alpha*u_xx was enforced using JAX automatic differentiation.
-- The model was trained with Optax Adam for 5000 epochs.
-- A static 3D surface plot and an interactive Plotly visualization were created.
-- [docs/Fabric_Report.md](docs/Fabric_Report.md)
-- [data/pinn_3d_fabric.html](data/pinn_3d_fabric.html)
+This week's progress involved building and training a Physics-Informed Neural Network to solve the 1D heat equation. We successfully generated a mesh-free dataset using random sampling for collocation, initial condition, and boundary condition points. To approximate the temperature field, we implemented a `HeatSurrogate` model using Flax Linen. 
+
+A core component of the project was enforcing the PDE physics; we achieved this by computing the exact heat equation residual using JAX automatic differentiation for the physics loss. The network was then trained using the Optax Adam optimizer for 5000 epochs. Finally, to analyze the results, we generated both a static 3D surface plot and an interactive Plotly HTML visualization.
+
+- [Read the detailed Fabric Report](docs/Fabric_Report.md)
+- [View the Interactive 3D PINN Visualization](data/pinn_3d_fabric.html)
