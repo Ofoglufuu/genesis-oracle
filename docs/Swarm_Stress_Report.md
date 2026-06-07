@@ -1,0 +1,138 @@
+# Swarm Stress Report
+
+**Date:** 2026-06-07  
+**Base script:** `src/monte_carlo.py` (Exercise 2 — unmodified)  
+**Simulation paths:** 1,000,000 per run  
+**Tool:** JAX `vmap` + `jax.random` on CPU
+
+---
+
+## Purpose
+
+This experiment investigates two aspects of the JAX-based Monte Carlo revenue model:
+
+1. **Stress Testing (Alpha):** How sensitive is the Value-at-Risk (95 %) to
+   increasing volatility in the production asset cost? We sweep the
+   log-normal sigma parameter from the baseline value (0.3) upward until the
+   VaR95 drops below zero — the *breaking point* where 5 % of outcomes
+   become net losses.
+
+2. **Profiling (Beta):** JAX traces and JIT-compiles functions on the first
+   call. We measure the cold (compile) vs warm (cached) execution time to
+   quantify the compilation overhead.
+
+---
+
+## Alpha — Stress Test Results
+
+The revenue model is:
+
+```
+D  ~ Normal(μ=1000, σ=150)          Market Demand
+C  = exp(Normal(μ=5.5, σ=sigma))     Production Asset Cost (log-normal)
+R  ~ Uniform(0.05, 0.25)             Regulatory Penalty Rate
+Revenue = D × 150 − C × (1 − R)
+```
+
+We hold all parameters fixed except **sigma** and observe the effect on
+**E[Revenue]** and **VaR95** (5th percentile).
+
+### Coarse Sweep
+
+| σ (sigma) | E[Revenue] | VaR95 | Status |
+|:---------:|-----------:|------:|:------:|
+| 0.30 | 149,752 | 112,734 | ✅ Baseline |
+| 0.50 | 149,734 | 112,715 | ✅ |
+| 1.00 | 149,627 | 112,596 | ✅ |
+| 1.50 | 149,333 | 112,189 | ✅ |
+| 2.00 | 148,457 | 110,625 | ✅ |
+| 2.50 | 145,410 | 106,767 | ✅ |
+| 3.00 | 132,773 | 98,869 | ✅ |
+| 3.50 | 70,719 | 77,028 | ⚠️ Degrading |
+| **4.00** | **−282,181** | **−334** | ❌ **VaR95 < 0** |
+| 4.50 | −2,542,199 | −186,402 | ❌ |
+| 5.00 | −18,397,694 | −611,027 | ❌ |
+
+### Refined Binary Search (σ = 3.50 → 4.00)
+
+| σ (sigma) | VaR95 | Status |
+|:---------:|------:|:------:|
+| 3.750 | 47,602 | ✅ |
+| 3.875 | 26,334 | ✅ |
+| 3.938 | 13,889 | ✅ |
+| 3.969 | 6,935 | ✅ |
+| 3.984 | 3,374 | ✅ |
+| 3.992 | 1,558 | ✅ |
+| 3.996 | 611 | ✅ |
+| 3.998 | 133 | ✅ (barely) |
+| **≈ 3.999** | **≈ 0** | 🔴 **Breaking point** |
+
+### Breaking-Point Estimate
+
+> **σ ≈ 4.0** is the approximate breaking point where VaR95 crosses zero.
+
+At the baseline σ = 0.3, the median cost is C ≈ e^5.5 ≈ 245 — negligible
+compared to D × 150 ≈ 150,000. But the log-normal distribution has a
+**heavy right tail** that explodes exponentially with sigma. At σ ≈ 4.0 the
+5th percentile of cost realizations is large enough to wipe out the revenue
+from demand, pushing 5 % of paths into negative territory.
+
+---
+
+## Beta — Profiler Results
+
+Both runs were executed **within the same Python process** using
+`jax.jit(jax.vmap(simulate_path))` with identical input shapes and dtypes
+(`PRNGKey(42)`, 1,000,000 subkeys). This ensures the JIT compilation cache
+is shared across invocations.
+
+| Run | Context | Execution Time | Notes |
+|:---:|:--------|---------------:|:------|
+| 1 | Cold (trace + compile) | **0.1272 s** | JAX traces the function → builds Jaxpr → XLA compiles to machine code → executes |
+| 2 | Warm (cached kernel) | **0.0248 s** | Skips tracing and compilation; runs cached XLA kernel directly |
+| — | **Speedup** | **5.1×** | — |
+
+### Explanation
+
+JAX uses **lazy tracing + JIT compilation** via XLA. On the first call to
+`jax.jit(jax.vmap(simulate_path))`, JAX:
+
+1. **Traces** the Python function to build an intermediate representation (Jaxpr).
+2. **Compiles** the Jaxpr to optimised machine code through XLA's HLO pipeline.
+3. **Executes** the compiled kernel.
+
+On the second call with the same input shapes and dtypes, steps 1–2 are
+skipped entirely and the cached kernel runs directly. This is why the second
+run is ≈ 5× faster — it only pays the raw execution cost, not the
+tracing and compilation overhead.
+
+> [!NOTE]
+> The profiler runs both invocations in the **same Python process** so that
+> JAX's in-memory compilation cache is available to the second call. If each
+> run were a separate `uv run python …` invocation, both would pay the full
+> cold cost because the cache does not persist across processes.
+
+---
+
+## Interpretation
+
+1. **Robustness to cost volatility is limited.** The model tolerates a
+   ~13× increase in cost sigma (0.3 → 4.0) before 5 % of paths become
+   unprofitable. While σ = 4.0 is extreme (it implies cost realisations
+   spanning from < \$1 to billions), it demonstrates how quickly log-normal
+   tail risk can dominate a linear revenue model.
+
+2. **JAX compilation overhead is a one-time cost.** The 5× cold-vs-warm
+   gap (measured in-process) confirms that JAX workloads benefit from
+   keeping the process alive and reusing the JIT cache — e.g., running
+   many scenarios in the same process rather than spawning separate
+   scripts for each.
+
+3. **`src/monte_carlo.py` was not modified.** All stress testing and
+   profiling was performed via a temporary helper (`src/_stress_profiler.py`)
+   that re-implements only the parametrised simulation function.
+
+---
+
+*Generated by Exercise 3 — Swarm Stress Test workflow.*
+
