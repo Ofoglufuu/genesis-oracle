@@ -58,3 +58,31 @@ A core component of the project was enforcing the PDE physics; we achieved this 
 
 - [Read the detailed Fabric Report](docs/Fabric_Report.md)
 - [View the Interactive 3D PINN Visualization](data/pinn_3d_fabric.html)
+
+---
+
+## Problem Set 6: Chaos Engine
+
+**Project Overview:** This project leverages Monte Carlo simulation, JAX vectorization, Antigravity subagent workflow analysis, and Markov Chain shock modeling to analyze revenue risks and system behavior under volatility.
+
+### Exercise 1: Classical NumPy Pi Estimation
+A classical Monte Carlo approach implemented in `src/classical_pi.py`. As recorded in the [submission log](docs/submission_log.md), the estimation reached a robust approximation.
+
+![Classical Pi Estimation](data/classical_pi_disp.png)
+
+### Exercise 2: JAX Monte Carlo Revenue Simulation
+Using JAX vectorization in `src/monte_carlo.py`, we simulated 1,000,000 paths in parallel. The [submission log](docs/submission_log.md) records the expected revenue and VaR95 threshold.
+
+![Revenue Distribution](data/revenue_dist.png)
+
+### Exercise 3: Agentic Automation via Antigravity Skills
+We deployed an Alpha Stress Tester and a Beta Profiler to analyze our revenue model. The [Swarm Stress Report](docs/Swarm_Stress_Report.md) details the findings:
+- **Alpha Stress Tester:** The Value-at-Risk (VaR95) breaks and drops below zero around a cost volatility of $\sigma \approx 4.0$.
+- **Beta Profiler:** Using in-process JAX profiling, we observed a 5.1× speedup when comparing the cold execution (trace and compile) to the warm execution (cached kernel).
+
+### Exercise 4: Markov Boss Fight
+In `src/markov_boss.py` and the accompanying [Markov Boss Summary](docs/markov_boss_summary.md), we model a macroeconomic environment across 365 days.
+
+![Markov Boss States](data/markov_boss_states.png)
+
+An unexpected Black Swan shock is introduced from day 180 through day 189. During this 10-day crisis window, the probability mass for Bull Market and Stagnation transitions shifts dramatically, sending 80% of their mass directly into Catastrophic Recession, heavily skewing the macro environment before baseline behavior is restored.
