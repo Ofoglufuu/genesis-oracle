@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "flax>=0.12.7",
+    "google-genai>=2.8.0",
     "jax>=0.10.0",
     "jaxlib>=0.10.0",
     "keras>=3.0.7",
@@ -13,5 +14,6 @@ dependencies = [
     "numpy>=2.4.4",
     "openpyxl>=3.1.5",
     "plotly>=6.8.0",
+    "pydantic>=2.13.4",
     "scipy>=1.17.1",
 ]
