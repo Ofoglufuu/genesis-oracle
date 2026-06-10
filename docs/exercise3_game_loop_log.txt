@@ -1,0 +1,71 @@
+
+========== Turn 1 ==========
+Diagnostic Summary: Kappa (1.0) is too low. System is freezing. Final temp: 19.73°C
+Temperature Log: [17.8, 19.76, 19.37, 20.49, 19.73]
+
+--- Raw JSON received from Gemini ---
+{"system_state": "FREEZING", "adjustment_action": "INCREASE", "delta_value": 4.0, "confidence_score": 0.95}
+-------------------------------------
+
+Action taken: INCREASE Kappa by 4.0
+Updated Kappa: 5.0
+
+========== Turn 2 ==========
+Diagnostic Summary: Kappa (5.0) is optimal. System is stable. Final temp: 99.21°C
+Temperature Log: [98.0, 98.03, 98.88, 98.96, 99.21]
+
+--- Raw JSON received from Gemini ---
+{
+"system_state": "PERFECT",
+"adjustment_action": "HOLD",
+"delta_value": 0.0,
+"confidence_score": 1.0
+}
+-------------------------------------
+
+Action taken: HOLD Kappa by 0.0
+Updated Kappa: 5.0
+
+AI correctly identified PERFECT state!
+
+========== Turn 3 ==========
+Diagnostic Summary: Kappa (5.0) is optimal. System is stable. Final temp: 99.43°C
+Temperature Log: [97.67, 99.82, 100.55, 100.6, 99.43]
+
+--- Raw JSON received from Gemini ---
+{"system_state":"PERFECT","adjustment_action":"HOLD","delta_value":0.0,"confidence_score":1.0}
+-------------------------------------
+
+Action taken: HOLD Kappa by 0.0
+Updated Kappa: 5.0
+
+AI correctly identified PERFECT state!
+
+========== Turn 4 ==========
+Diagnostic Summary: Kappa (5.0) is optimal. System is stable. Final temp: 99.14°C
+Temperature Log: [96.86, 98.21, 98.28, 99.24, 99.14]
+
+--- Raw JSON received from Gemini ---
+{"system_state": "PERFECT", "adjustment_action": "HOLD", "delta_value": 0.0, "confidence_score": 1.0}
+-------------------------------------
+
+Action taken: HOLD Kappa by 0.0
+Updated Kappa: 5.0
+
+AI correctly identified PERFECT state!
+
+========== Turn 5 ==========
+Diagnostic Summary: Kappa (5.0) is optimal. System is stable. Final temp: 99.41°C
+Temperature Log: [97.4, 99.32, 99.09, 100.34, 99.41]
+
+--- Raw JSON received from Gemini ---
+{"system_state":"PERFECT","adjustment_action":"HOLD","delta_value":0.0,"confidence_score":1.0}
+-------------------------------------
+
+Action taken: HOLD Kappa by 0.0
+Updated Kappa: 5.0
+
+AI correctly identified PERFECT state!
+
+--- Final Simulation Result ---
+Final State: PERFECT, Kappa: 5.0
