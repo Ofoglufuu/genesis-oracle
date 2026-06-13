@@ -116,3 +116,18 @@ The following key deliverables have been implemented and finalized:
 - `docs/Cerebral_Nexus_Report.md`
 
 The Cerebral Nexus pipeline is complete, secure, and ready for submission.
+
+## 7. Exercise 6: Structural Deep Dive & Alignment Foundations
+
+### 7.1 Core Mechanism: Scaled Dot-Product Attention
+
+Scaled Dot-Product Attention processes a full context window by projecting every token into queries, keys, and values, then comparing all queries against all keys at once to compute relevance weights across the entire sequence. The Transformer paper defines this as `Attention(Q, K, V) = softmax(QKᵀ / √dk)V`, meaning the model can directly connect distant positions instead of waiting for information to pass step-by-step through a recurrent hidden state. This is a major shift from LSTMs because recurrent models process telemetry streams sequentially, while self-attention allows parallel inspection of all timestamps and can capture long-range dependencies with far fewer sequential operations. For long simulation telemetry, this means anomalies, earlier causal signals, and later system effects can be related directly inside the same context window instead of being compressed through fragile recursive memory.
+
+Source: Vaswani et al., "Attention Is All You Need" — https://arxiv.org/pdf/1706.03762
+
+### 7.2 Advanced Multi-Agent Alignment: Tunix and GRPO
+
+Google Tunix is a JAX-based post-training framework for aligning and improving large language models after pretraining. A framework like Tunix can optimize a terminal-using agent by treating safe tool invocation as a post-training alignment problem rather than a simple prompting problem. Because Tunix supports scalable post-training workflows such as reinforcement learning and GRPO-style optimization, many candidate agent trajectories can be evaluated against reward criteria like “inspect before editing,” “avoid destructive commands,” “do not expose secrets,” “validate generated files,” and “stop before unsafe system-state changes.” Over repeated distributed training runs, the agent can learn to prefer terminal actions that preserve the repository, respect environment boundaries, and recover gracefully from errors instead of blindly executing risky commands. In practice, this would make a developer agent more reliable because its policy is optimized not only for task completion, but also for operational safety, rollback awareness, and prevention of system state failures.
+
+Source: Google Tunix — https://github.com/google/tunix  
+Additional source: Google Developers Blog, “Introducing Tunix: A JAX-Native Library for LLM Post-Training” — https://developers.googleblog.com/en/introducing-tunix-a-jax-native-library-for-llm-post-training/
