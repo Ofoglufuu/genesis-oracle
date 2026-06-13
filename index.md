@@ -86,3 +86,12 @@ In `src/markov_boss.py` and the accompanying [Markov Boss Summary](docs/markov_b
 ![Markov Boss States](data/markov_boss_states.png)
 
 An unexpected Black Swan shock is introduced from day 180 through day 189. During this 10-day crisis window, the probability mass for Bull Market and Stagnation transitions shifts dramatically, sending 80% of their mass directly into Catastrophic Recession, heavily skewing the macro environment before baseline behavior is restored.
+
+---
+
+## Problem Set 7: The Cerebral Nexus
+
+This problem set integrates Gemini API calls with simulation workflows, visual anomaly detection, structured JSON parameter control, and prompt injection defense. It also includes a structural deep dive into Transformer attention mechanisms and alignment foundations with Tunix/GRPO.
+
+- [Read the Cerebral Nexus Report](docs/Cerebral_Nexus_Report.md)
+- Key outputs: Gemini API ping, visual audit plot, closed-loop kappa control logs, defensive prompt injection evaluation, and alignment theory summary.
