@@ -1,0 +1,10 @@
+architecture=GemmaBackbone
+framework=KerasHub
+backend=jax
+remote_gpu=cuda:0
+lora_rank=4
+trainable_parameters=13312
+frozen_parameters=1836288
+epochs=1
+status=completed
+note=Compact Gemma configuration used because the full Gemma 4 E2B preset exceeds T4 memory during initialization.
