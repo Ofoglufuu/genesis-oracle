@@ -17,3 +17,6 @@ docs/kaggle.json
 # Kaggle credentials
 kaggle.json
 **/kaggle.json
+
+#env
+.env
