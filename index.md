@@ -95,3 +95,8 @@ This problem set integrates Gemini API calls with simulation workflows, visual a
 
 - [Read the Cerebral Nexus Report](docs/Cerebral_Nexus_Report.md)
 - Key outputs: Gemini API ping, visual audit plot, closed-loop kappa control logs, defensive prompt injection evaluation, and alignment theory summary.
+
+---
+
+## Problem Set 10: Project Genesis – The Cognitive Core
+- [Read ADK Report](docs/ADK_Report.md)
